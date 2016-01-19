@@ -1,0 +1,6 @@
+.idea
+*.iml
+*.log
+*.bkp
+dependency-reduced-pom.xml
+target
