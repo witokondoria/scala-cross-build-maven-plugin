@@ -19,6 +19,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.stratio.mojo</groupId>
+  <!-- Use default Scala binary version hardcorded in the artifactId -->
   <artifactId>full-example_2.10</artifactId>
   <version>1</version>
 
@@ -57,6 +58,14 @@
   </build>
 
   <profiles>
+    <!--
+      Define one Scala profile per version.
+      The easiest way to use the plugin is by using these profiles
+      defining scala.version and scala.binary.version properties.
+
+      These profiles might define further configuration for
+      version-dependant build customizations.
+    -->
     <profile>
       <id>scala-2.10</id>
       <properties>
