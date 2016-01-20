@@ -7,6 +7,7 @@
   <version>0.1.0-SNAPSHOT</version>
   <properties>
     <scala.binary.version>2.11</scala.binary.version>
+    <scala.version>2.11.7</scala.version>
     <a.version>2.10</a.version>
     <b.version>2.11</b.version>
   </properties>

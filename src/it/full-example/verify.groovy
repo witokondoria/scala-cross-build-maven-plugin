@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stratio.mojo.scala.crossbuild;
+import java.io.*;
 
-import java.util.List;
+def expectedOutputArtifacts = [
+        "2.10/full-example_2.10-1.jar",
+        "2.11/full-example_2.11-1.jar"
+]
 
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
-
-interface RewriteRule {
-  List<Replacement> replace(List<String> path, XMLEventReader reader, XMLEvent event) throws XMLStreamException;
+expectedOutputArtifacts.each {
+    def file = new File("${basedir}/target/${it}")
+    if (!file.isFile()) {
+        throw new FileNotFoundException("Could not find generated JAR: " + file)
+    }
 }

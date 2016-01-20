@@ -1,0 +1,75 @@
+<!--
+
+    Copyright (C) 2015 Stratio (http://stratio.com)
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.stratio.mojo</groupId>
+  <artifactId>full-example_2.10</artifactId>
+  <version>1</version>
+
+  <properties>
+    <!-- These properties are mandatory. -->
+    <scala.binary.version>2.10</scala.binary.version>
+    <scala.version>2.10.6</scala.version>
+    <!-- These are defined just as convenience. -->
+    <scala_2.10.version>2.10.6</scala_2.10.version>
+    <scala_2.11.version>2.11.7</scala_2.11.version>
+  </properties>
+
+  <build>
+    <!--
+      Use a separate target directory for each Scala binary version.
+      These allows us to interleave goals for both version without interference,
+      such as:
+      $ mvn change-scala-version:run -Pscala-2.10
+      $ mvn compile
+      $ mvn change-scala-version:run -Pscala-2.11
+      $ mvn compile
+      $ mvn change-scala-version:run -Pscala-2.10
+      $ mvn package
+      $ mvn change-scala-version:run -Pscala-2.11
+      $ mvn package
+    -->
+    <directory>${project.basedir}/target/${scala.binary.version}</directory>
+    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+    <plugins>
+      <plugin>
+        <groupId>com.stratio.mojo</groupId>
+        <artifactId>change-scala-version-maven-plugin</artifactId>
+        <version>@test.version@</version>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>scala-2.10</id>
+      <properties>
+        <scala.binary.version>2.10</scala.binary.version>
+        <scala.version>${scala_2.10.version}</scala.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>scala-2.11</id>
+      <properties>
+        <scala.binary.version>2.11</scala.binary.version>
+        <scala.version>${scala_2.11.version}</scala.version>
+      </properties>
+    </profile>
+  </profiles>
+</project>

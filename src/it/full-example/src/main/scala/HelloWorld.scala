@@ -13,14 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stratio.mojo.scala.crossbuild;
-
-import java.util.List;
-
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
-
-interface RewriteRule {
-  List<Replacement> replace(List<String> path, XMLEventReader reader, XMLEvent event) throws XMLStreamException;
+object HelloWorld {
+  def main(args: Array[String]): Unit = {
+    println("Hello, world!")
+  }
 }
