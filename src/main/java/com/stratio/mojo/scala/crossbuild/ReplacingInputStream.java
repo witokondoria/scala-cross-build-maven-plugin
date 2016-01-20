@@ -8,14 +8,14 @@ import java.util.List;
 class ReplacingInputStream extends InputStream {
 
   private final InputStream input;
-  private final List<Occurrence> occurrences;
-  private Occurrence currentOccurrence;
+  private final List<Replacement> occurrences;
+  private Replacement currentOccurrence;
   private int currentOccurrenceIndex;
   private long inputOffset;
   private int innerOffset;
   private boolean replacing;
 
-  public ReplacingInputStream(final InputStream input, final List<Occurrence> occurrences) {
+  public ReplacingInputStream(final InputStream input, final List<Replacement> occurrences) {
     this.input = input;
     this.occurrences = new ArrayList<>(occurrences);
     this.currentOccurrenceIndex = 0;

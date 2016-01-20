@@ -16,12 +16,12 @@ public class ReplacingInputStreamTest {
 
   @Test
   public void testReplacingInputStream() throws IOException {
-    internalTest("abcXXabc", asList(new Occurrence(3, 2, "YY".getBytes())), "abcYYabc");
-    internalTest("XXabc", asList(new Occurrence(0, 2, "YY".getBytes())), "YYabc");
-    internalTest("abcXX", asList(new Occurrence(3, 2, "YY".getBytes())), "abcYY");
+    internalTest("abcXXabc", asList(new Replacement(3, 2, "YY".getBytes())), "abcYYabc");
+    internalTest("XXabc", asList(new Replacement(0, 2, "YY".getBytes())), "YYabc");
+    internalTest("abcXX", asList(new Replacement(3, 2, "YY".getBytes())), "abcYY");
   }
 
-  private void internalTest(final String input, final List<Occurrence> occurrences, final String expectedOutput) throws
+  private void internalTest(final String input, final List<Replacement> occurrences, final String expectedOutput) throws
       IOException {
     final InputStream underlying = new StringInputStream(input);
     final InputStream in = new ReplacingInputStream(underlying, occurrences);

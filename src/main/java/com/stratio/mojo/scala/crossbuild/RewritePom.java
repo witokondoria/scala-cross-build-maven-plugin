@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
@@ -46,8 +48,12 @@ class RewritePom {
 
   private static void rewritePom(final File origFile, final File newFile, final String newVersion) throws IOException,
       XMLStreamException {
-    final FindOccurrences findOccurrences = new FindOccurrences();
-    final List<Occurrence> occurrences = findOccurrences.find(origFile, newVersion);
+    final List<RewriteRule> rewriteRules = Arrays.asList(
+        new ArtifactIdRewriteRule(newVersion),
+        new PropertyRewriteRule("scala.binary.version", newVersion)
+    );
+    final FindReplacements findReplacements = new FindReplacements(rewriteRules);
+    final List<Replacement> occurrences = findReplacements.find(origFile);
     if (!occurrences.isEmpty()) {
       try (final BufferedInputStream in = new BufferedInputStream(
           new ReplacingInputStream(new FileInputStream(origFile), occurrences)

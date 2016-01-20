@@ -3,12 +3,12 @@ package com.stratio.mojo.scala.crossbuild;
 import java.util.Arrays;
 import java.util.Locale;
 
-class Occurrence {
+class Replacement {
   public final long offset;
   public final long length;
   public final byte[] replacement;
 
-  public Occurrence(final long offset, final long length, final byte[] replacement) {
+  public Replacement(final long offset, final long length, final byte[] replacement) {
     this.offset = offset;
     this.length = length;
     this.replacement = replacement;
@@ -18,7 +18,7 @@ class Occurrence {
   public String toString() {
     return String.format(
         Locale.ENGLISH,
-        "Occurrence(offset=%d, length=%d, replacement=%s",
+        "Replacement(offset=%d, length=%d, replacement=%s",
         offset,
         length,
         new String(replacement)
@@ -31,7 +31,7 @@ class Occurrence {
     if (o == null || getClass() != o.getClass())
       return false;
 
-    Occurrence that = (Occurrence) o;
+    Replacement that = (Replacement) o;
 
     if (offset != that.offset)
       return false;
