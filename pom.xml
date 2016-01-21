@@ -7,13 +7,13 @@
     <version>0.5.0</version>
   </parent>
   <groupId>com.stratio.mojo</groupId>
-  <artifactId>change-scala-version-maven-plugin</artifactId>
+  <artifactId>scala-cross-build-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <version>0.1.0-SNAPSHOT</version>
 
-  <name>change-scala-version-maven-plugin Maven Mojo</name>
-  <description>Maven Plugin with helper goals to maintain Scala Cross Version Builds.</description>
-  <url>http://github.com/Stratio/change-scala-version-maven-plugin</url>
+  <name>scala-cross-build-maven-plugin Maven Mojo</name>
+  <description>Maven Plugin to maintain Scala Cross Version Builds.</description>
+  <url>http://github.com/Stratio/scala-cross-build-maven-plugin</url>
 
   <properties>
     <maven.version>3.0.1</maven.version>

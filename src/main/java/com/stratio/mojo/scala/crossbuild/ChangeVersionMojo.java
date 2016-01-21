@@ -45,10 +45,9 @@ import org.apache.maven.project.MavenProject;
  *
  * TODO: Add link to relevant scaladoc.
  *
- * @goal run
- * @phase change-scala-version
+ * @goal change-version
  */
-public class ChangeScalaVersionMojo extends AbstractMojo {
+public class ChangeVersionMojo extends AbstractMojo {
 
   /**
    * The projects in the reactor.

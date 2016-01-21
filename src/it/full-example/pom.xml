@@ -37,13 +37,13 @@
       Use a separate target directory for each Scala binary version.
       These allows us to interleave goals for both version without interference,
       such as:
-      $ mvn change-scala-version:run -Pscala-2.10
+      $ mvn scala-cross-build:change-version -Pscala-2.10
       $ mvn compile
-      $ mvn change-scala-version:run -Pscala-2.11
+      $ mvn scala-cross-build:change-version -Pscala-2.11
       $ mvn compile
-      $ mvn change-scala-version:run -Pscala-2.10
+      $ mvn scala-cross-build:change-version -Pscala-2.10
       $ mvn package
-      $ mvn change-scala-version:run -Pscala-2.11
+      $ mvn scala-cross-build:change-version -Pscala-2.11
       $ mvn package
     -->
     <directory>${project.basedir}/target/${scala.binary.version}</directory>
@@ -51,7 +51,7 @@
     <plugins>
       <plugin>
         <groupId>com.stratio.mojo</groupId>
-        <artifactId>change-scala-version-maven-plugin</artifactId>
+        <artifactId>scala-cross-build-maven-plugin</artifactId>
         <version>@test.version@</version>
       </plugin>
     </plugins>
