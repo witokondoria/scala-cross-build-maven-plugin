@@ -16,31 +16,26 @@
 package com.stratio.mojo.scala.crossbuild;
 
 import static org.fest.assertions.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.project.MavenProject;
+import org.jdom2.JDOMException;
+import org.jdom2.input.JDOMParseException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
-import com.ctc.wstx.exc.WstxEOFException;
-
-public class RewritePomTest {
+public class RewriteJUnitXMLTest {
 
   @Rule
   public TemporaryFolder tempDir = new TemporaryFolder();
@@ -48,51 +43,38 @@ public class RewritePomTest {
   @Rule
   public ExpectedException thrown = ExpectedException.none();
 
-  private static MavenProject getMockMavenProject(final File file) {
-    final MavenProject project = mock(MavenProject.class);
-    when(project.getFile()).thenReturn(file);
-    return project;
-  }
-
   @Test
-  public void rewriteNonExistentFile() throws IOException, XMLStreamException {
-    final RewritePom rewritePom = new RewritePom();
-    final String path = "pom_does_not_exist.xml";
-    final MavenProject project = getMockMavenProject(new File(path));
+  public void rewriteNonExistentFile() throws IOException, JDOMException {
+    final RewriteJUnitXML rewriter = new RewriteJUnitXML();
+    final String path = "report_does_not_exist.xml";
     final String newBinaryVersion = "2.11";
-    final String newVersion = "2.11.7";
-    thrown.expect(NoSuchFileException.class);
-    thrown.expectMessage(path);
-    rewritePom.rewrite(project, newBinaryVersion, newVersion);
+    thrown.expect(FileNotFoundException.class);
+    rewriter.rewrite(new File(path), newBinaryVersion);
   }
 
   @Test
-  public void rewriteEmptyFile() throws IOException, XMLStreamException {
-    final RewritePom rewritePom = new RewritePom();
+  public void rewriteEmptyFile() throws IOException, JDOMException {
+    final RewriteJUnitXML rewriter = new RewriteJUnitXML();
     tempDir.create();
     final File file = tempDir.newFile();
     file.delete();
     assertThat(file.createNewFile()).isTrue();
-    final MavenProject project = getMockMavenProject(file);
     final String newBinaryVersion = "2.11";
-    final String newVersion = "2.11.7";
     //TODO: thrown.expect(IOException.class); ????
-    thrown.expect(WstxEOFException.class);
-    rewritePom.rewrite(project, newBinaryVersion, newVersion);
+    thrown.expect(JDOMParseException.class);
+    rewriter.rewrite(file, newBinaryVersion);
   }
 
   @Test
-  public void rewriteBaseArtifactId() throws IOException, XMLStreamException {
-    final RewritePom rewritePom = new RewritePom();
+  public void rewriteBasicReport() throws IOException, JDOMException {
+    final RewriteJUnitXML rewriter = new RewriteJUnitXML();
     tempDir.create();
     final File file = tempDir.newFile();
     file.delete();
-    Files.copy(getClass().getResourceAsStream("/basic_pom.xml"), file.toPath());
-    final MavenProject project = getMockMavenProject(file);
+    Files.copy(getClass().getResourceAsStream("/basic_junit.xml"), file.toPath());
     final String newBinaryVersion = "2.11";
-    final String newVersion = "2.11.7";
-    rewritePom.rewrite(project, newBinaryVersion, newVersion);
-    assertEqualToResource(file, "/basic_pom_result.xml");
+    rewriter.rewrite(file, newBinaryVersion);
+    assertEqualToResource(file, "/basic_junit_result.xml");
     file.delete();
   }
 

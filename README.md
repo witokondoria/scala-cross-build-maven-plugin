@@ -1,5 +1,11 @@
-change-scala-version-maven-plugin
-=================================
+scala-cross-build-maven-plugin
+==============================
+
+Introduction
+------------
+
+scala-cross-build-maven-plugin provides goals that help maintaining Scala cross version builds
+with Maven.
 
 Set up
 ------
@@ -9,4 +15,11 @@ See src/it/full-example/pom.xml for an example.
 Usage
 -----
 
-mvn change-scala-version:run -Pscala-2.11
+```
+# Change Scala version in pom.xml.
+mvn scala-cross-build:change-version -Pscala-2.11
+
+# Transform JUnit XML reports to append Scala binary version to test case names.
+mvn scala-cross-build:change-version -Pscala-2.11
+
+```

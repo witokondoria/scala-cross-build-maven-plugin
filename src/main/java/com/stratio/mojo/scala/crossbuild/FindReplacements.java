@@ -20,13 +20,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+
+import com.ctc.wstx.api.WstxInputProperties;
 
 class FindReplacements {
 
@@ -39,6 +38,7 @@ class FindReplacements {
   public List<Replacement> find(final File file) throws IOException, XMLStreamException {
     final List<Replacement> replacements = new ArrayList<>();
     final XMLInputFactory xmlif = XMLInputFactory.newFactory();
+    xmlif.setProperty(WstxInputProperties.P_NORMALIZE_LFS, "false");
     final PathTrackingXMLEventReader reader = new PathTrackingXMLEventReader(
         xmlif.createXMLEventReader(file.toString(), new FileInputStream(file))
     );

@@ -18,9 +18,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.stratio.mojo</groupId>
+  <parent>
+    <groupId>com.stratio.mojo</groupId>
+    <artifactId>multi-module_2.10</artifactId>
+    <version>1</version>
+  </parent>
   <!-- Use default Scala binary version hardcorded in the artifactId -->
-  <artifactId>full-example_2.10</artifactId>
+  <artifactId>sub-module_2.10</artifactId>
   <version>1</version>
 
   <properties>
@@ -63,43 +67,18 @@
     -->
     <directory>${project.basedir}/target/${scala.binary.version}</directory>
     <outputDirectory>${project.build.directory}/classes</outputDirectory>
-    <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
 
     <plugins>
-
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.1</version>
-        <configuration>
-          <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
-          <recompileMode>incremental</recompileMode>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>add-source</goal>
-              <goal>compile</goal>
-              <goal>testCompile</goal>
-              <goal>doc</goal>
-              <goal>doc-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>com.stratio.mojo</groupId>
-        <artifactId>scala-cross-build-maven-plugin</artifactId>
-        <version>@test.version@</version>
       </plugin>
 
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
           <includes>
-            <include>**/*Suite.*</include>
+            <include>**/*Suite.scala</include>
           </includes>
         </configuration>
       </plugin>
@@ -107,14 +86,6 @@
   </build>
 
   <profiles>
-    <!--
-      Define one Scala profile per version.
-      The easiest way to use the plugin is by using these profiles
-      defining scala.version and scala.binary.version properties.
-
-      These profiles might define further configuration for
-      version-dependant build customizations.
-    -->
     <profile>
       <id>scala-2.10</id>
       <properties>
@@ -130,4 +101,5 @@
       </properties>
     </profile>
   </profiles>
+
 </project>

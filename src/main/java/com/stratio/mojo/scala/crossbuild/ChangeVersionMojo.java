@@ -38,42 +38,34 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Adapts pom.xml files to Scala conventions for cross version builds.
  *
- * TODO: Add link to relevant scaladoc.
- *
- * @goal change-version
+ * See http://www.scala-sbt.org/0.13/docs/Cross-Build.html
  */
+@Mojo(name = "change-version")
 public class ChangeVersionMojo extends AbstractMojo {
 
   /**
    * The projects in the reactor.
-   *
-   * @parameter expression="${reactorProjects}"
-   * @required
-   * @readonly
    */
+  @Parameter(defaultValue = "${reactorProjects}", required = true, readonly = true)
   private List<MavenProject> reactorProjects;
 
   /**
    * The Scala binary version to switch to.
-   *
-   * @parameter expression="${scala.binary.version}"
-   * @required
-   * @readonly
    */
+  @Parameter(defaultValue = "${scala.binary.version}", required = true, readonly = true)
   private String scalaBinaryVersion;
 
   /**
    * The Scala library/compiler version to switch to.
-   *
-   * @parameter expression="${scala.version}"
-   * @required
-   * @readonly
    */
+  @Parameter(defaultValue = "${scala.version}", required = true, readonly = true)
   private String scalaVersion;
 
   public void execute() throws MojoExecutionException {
@@ -81,7 +73,7 @@ public class ChangeVersionMojo extends AbstractMojo {
     for (final MavenProject subproject: reactorProjects) {
       getLog().debug("Rewriting " + subproject.getFile());
       try {
-        rewritePom.rewritePom(subproject, scalaBinaryVersion, scalaVersion);
+        rewritePom.rewrite(subproject, scalaBinaryVersion, scalaVersion);
       } catch (final IOException | XMLStreamException ex) {
         restoreProjects(reactorProjects);
         throw new MojoExecutionException("Failed to rewrite POM", ex);

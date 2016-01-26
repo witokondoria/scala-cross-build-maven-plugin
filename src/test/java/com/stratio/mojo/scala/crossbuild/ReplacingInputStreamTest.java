@@ -34,6 +34,7 @@ public class ReplacingInputStreamTest {
     internalTest("abcXXabc", asList(new Replacement(3, 2, "YY".getBytes())), "abcYYabc");
     internalTest("XXabc", asList(new Replacement(0, 2, "YY".getBytes())), "YYabc");
     internalTest("abcXX", asList(new Replacement(3, 2, "YY".getBytes())), "abcYY");
+    internalTest("abcXX", asList(new Replacement(3, 2, "YYUU".getBytes())), "abcYYUU");
   }
 
   private void internalTest(final String input, final List<Replacement> occurrences, final String expectedOutput) throws

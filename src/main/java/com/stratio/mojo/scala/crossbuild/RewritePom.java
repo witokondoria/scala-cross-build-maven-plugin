@@ -15,16 +15,8 @@
  */
 package com.stratio.mojo.scala.crossbuild;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
@@ -33,55 +25,17 @@ import org.apache.maven.project.MavenProject;
 
 class RewritePom {
 
-  private static final String BKP_SUFFIX = ".bkp";
-
-  public void rewritePom(final MavenProject pom, final String newBinaryVersion, final String newVersion) throws IOException, XMLStreamException {
-    final File pomFile = pom.getFile();
-    backupFile(pomFile);
-    final File bkpFile = getBackupFileName(pomFile);
-    rewritePom(bkpFile, pomFile, newBinaryVersion, newVersion);
-  }
-
-
-  public void restorePom(final MavenProject pom) throws IOException {
-    restoreFile(pom.getFile());
-  }
-
-  private static void backupFile(final File origFile) throws IOException {
-    final File bkpFile = getBackupFileName(origFile);
-    Files.copy(origFile.toPath(), bkpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-  }
-
-  private static void restoreFile(final File origFile) throws IOException {
-    final File bkpFile = getBackupFileName(origFile);
-    Files.copy(bkpFile.toPath(), origFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-  }
-
-  private static File getBackupFileName(final File origFile) throws IOException {
-    return new File(origFile.getAbsolutePath() + BKP_SUFFIX);
-  }
-
-  private static void rewritePom(final File origFile, final File newFile, final String newBinaryVersion, final String newVersion) throws IOException,
-      XMLStreamException {
+  public void rewrite(final MavenProject pom, final String newBinaryVersion, final String newVersion) throws IOException, XMLStreamException {
     final List<RewriteRule> rewriteRules = Arrays.asList(
         new ArtifactIdRewriteRule(newBinaryVersion),
         new PropertyRewriteRule("scala.binary.version", newBinaryVersion),
         new PropertyRewriteRule("scala.version", newVersion)
     );
-    final FindReplacements findReplacements = new FindReplacements(rewriteRules);
-    final List<Replacement> occurrences = findReplacements.find(origFile);
-    if (!occurrences.isEmpty()) {
-      try (final BufferedInputStream in = new BufferedInputStream(
-          new ReplacingInputStream(new FileInputStream(origFile), occurrences)
-      )) {
-        try (final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(newFile, false))) {
-          int b;
-          while ((b = in.read()) != -1) {
-            out.write(b);
-          }
-        }
-      }
-    }
+    final XMLRewriter rewriter = new XMLRewriter(rewriteRules);
+    rewriter.rewrite(pom.getFile());
   }
 
+  public void restorePom(final MavenProject pom) throws IOException {
+    XMLRewriter.restoreFile(pom.getFile());
+  }
 }

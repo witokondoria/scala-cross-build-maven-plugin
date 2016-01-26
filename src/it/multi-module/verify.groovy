@@ -16,12 +16,12 @@
 import java.io.*;
 
 def expectedOutputArtifacts = [
-        "2.10/full-example_2.10-1.jar",
-        "2.11/full-example_2.11-1.jar"
+        "2.10/sub-module_2.10-1.jar",
+        "2.11/sub-module_2.11-1.jar"
 ]
 
 expectedOutputArtifacts.each {
-    def file = new File("${basedir}/target/${it}")
+    def file = new File("${basedir}/sub-module/target/${it}")
     if (!file.isFile()) {
         throw new FileNotFoundException("Could not find generated JAR: " + file)
     }

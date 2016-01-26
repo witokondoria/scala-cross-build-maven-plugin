@@ -60,7 +60,7 @@ class ReplacingInputStream extends InputStream {
         toRead = currentOccurrence.replacement[innerOffset];
 
         /* If we are finished replacing, reset variables */
-        if (innerOffset == currentOccurrence.length - 1) {
+        if (innerOffset == currentOccurrence.replacement.length - 1) {
           replacing = false;
           innerOffset = -1;
           currentOccurrenceIndex++;

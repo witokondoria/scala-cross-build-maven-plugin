@@ -20,8 +20,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.stratio.mojo</groupId>
   <!-- Use default Scala binary version hardcorded in the artifactId -->
-  <artifactId>full-example_2.10</artifactId>
+  <artifactId>multi-module_2.10</artifactId>
   <version>1</version>
+  <packaging>pom</packaging>
 
   <properties>
     <!-- These properties are mandatory. -->
@@ -32,76 +33,40 @@
     <scala_2.11.version>2.11.7</scala_2.11.version>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.binary.version}</artifactId>
-      <version>2.2.4</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+  <modules>
+    <module>sub-module</module>
+  </modules>
 
   <build>
-    <!--
-      Use a separate target directory for each Scala binary version.
-      These allows us to interleave goals for both version without interference,
-      such as:
-      $ mvn scala-cross-build:change-version -Pscala-2.10
-      $ mvn compile
-      $ mvn scala-cross-build:change-version -Pscala-2.11
-      $ mvn compile
-      $ mvn scala-cross-build:change-version -Pscala-2.10
-      $ mvn package
-      $ mvn scala-cross-build:change-version -Pscala-2.11
-      $ mvn package
-    -->
-    <directory>${project.basedir}/target/${scala.binary.version}</directory>
-    <outputDirectory>${project.build.directory}/classes</outputDirectory>
-    <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
-
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>scala-maven-plugin</artifactId>
+          <version>3.2.1</version>
+          <configuration>
+            <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
+            <recompileMode>incremental</recompileMode>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>add-source</goal>
+                <goal>compile</goal>
+                <goal>testCompile</goal>
+                <goal>doc</goal>
+                <goal>doc-jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
-
-      <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.1</version>
-        <configuration>
-          <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
-          <recompileMode>incremental</recompileMode>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>add-source</goal>
-              <goal>compile</goal>
-              <goal>testCompile</goal>
-              <goal>doc</goal>
-              <goal>doc-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>com.stratio.mojo</groupId>
         <artifactId>scala-cross-build-maven-plugin</artifactId>
         <version>@test.version@</version>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-          <includes>
-            <include>**/*Suite.*</include>
-          </includes>
-        </configuration>
       </plugin>
     </plugins>
   </build>

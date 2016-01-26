@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import java.io.*;
+import org.junit.runner.RunWith
+import org.scalatest.FunSuite
+import org.scalatest.junit.JUnitRunner
 
-def expectedOutputArtifacts = [
-        "2.10/full-example_2.10-1.jar",
-        "2.11/full-example_2.11-1.jar"
-]
+@RunWith(classOf[JUnitRunner])
+class HelloWorldSuite extends FunSuite {
 
-expectedOutputArtifacts.each {
-    def file = new File("${basedir}/target/${it}")
-    if (!file.isFile()) {
-        throw new FileNotFoundException("Could not find generated JAR: " + file)
-    }
+  test("Hello World test") {
+    HelloWorld.main(Array())
+  }
+
 }
-
-return true

@@ -16,6 +16,7 @@
 package com.stratio.mojo.scala.crossbuild;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +38,7 @@ class ArtifactIdRewriteRule implements RewriteRule {
     if (!event.isStartElement()) {
       return Collections.emptyList();
     }
-    if (path.size() != 2 || !"project".equals(path.get(0)) || !"artifactId".equals(path.get(1))) {
+    if (!isArtifactId(path)) {
       return Collections.emptyList();
     }
     final ScalaVersionManipulation svm = new ScalaVersionManipulation();
@@ -52,5 +53,17 @@ class ArtifactIdRewriteRule implements RewriteRule {
     final int length = oldArtifactId.getBytes(StandardCharsets.UTF_8).length;
     final Replacement occurrence = new Replacement(offset, length, replacement);
     return Collections.singletonList(occurrence);
+  }
+
+  private static final List<String> ARTIFACT_ID_PATH = Collections.unmodifiableList(Arrays.asList(
+      "project", "artifactId"
+  ));
+
+  private static final List<String> PARENT_ARTIFACT_ID_PATH = Collections.unmodifiableList(Arrays.asList(
+      "project", "parent", "artifactId"
+  ));
+
+  private boolean isArtifactId(final List<String> path) {
+    return ARTIFACT_ID_PATH.equals(path) || PARENT_ARTIFACT_ID_PATH.equals(path);
   }
 }
