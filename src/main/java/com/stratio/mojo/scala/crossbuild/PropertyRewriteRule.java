@@ -19,12 +19,10 @@ import java.util.regex.Pattern;
 
 class PropertyRewriteRule implements RewriteRule {
 
-  private final String property;
   private final String newValue;
   private final Pattern propertyPattern;
 
   public PropertyRewriteRule(final String property, final String newValue) {
-    this.property = property;
     this.newValue = newValue;
     this.propertyPattern = Pattern.compile(String.format(
         "(<project(?:(?<!</properties>)(?:.|\n))*?<properties>(?:(?<!</properties>)(?:.|\n))*?<%s>)"

@@ -44,7 +44,6 @@ class FileRewriter {
       throw new FileNotFoundException("File does not exist: " + file);
     }
     backupFile(file);
-    final File bkpFile = getBackupFileName(file);
     String result = IOUtils.toString(new FileInputStream(file), StandardCharsets.UTF_8);
     for (final RewriteRule rule: rules) {
       result = rule.replace(result);
