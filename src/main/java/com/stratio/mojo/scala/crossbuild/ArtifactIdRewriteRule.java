@@ -15,55 +15,34 @@
  */
 package com.stratio.mojo.scala.crossbuild;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class ArtifactIdRewriteRule implements RewriteRule {
 
   private final String newVersion;
+  private final Pattern artifactIdPattern = Pattern.compile(
+      "(<artifactId>(?:[^<]|\\n){0,50}?_)(?:[0-9]+\\.[0-9]+)(</artifactId>)",
+      Pattern.MULTILINE & Pattern.DOTALL
+  );
+  private final Pattern limitPattern = Pattern.compile("<(?:build|dependencies|reporting|profiles)>");
 
   public ArtifactIdRewriteRule(final String newVersion) {
     this.newVersion = newVersion;
   }
 
   @Override
-  public List<Replacement> replace(final List<String> path, final XMLEventReader reader, final XMLEvent event) throws
-      XMLStreamException {
-    if (!event.isStartElement()) {
-      return Collections.emptyList();
+  public String replace(final String input) {
+    final Matcher limitMatcher = limitPattern.matcher(input);
+    int limit = input.length();
+    String prefix = input;
+    String suffix = "";
+    if (limitMatcher.find()) {
+      limit = limitMatcher.toMatchResult().start();
+      prefix = input.substring(0, limit);
+      suffix = input.substring(limit);
     }
-    if (!isArtifactId(path)) {
-      return Collections.emptyList();
-    }
-    final ScalaVersionManipulation svm = new ScalaVersionManipulation();
-    final int offset = reader.peek().getLocation().getCharacterOffset();
-    final String oldArtifactId = reader.getElementText().trim();
-    final String newArtifactId = svm.changeScalaVersionInArtifactId(oldArtifactId, newVersion);
-    if (oldArtifactId.equals(newArtifactId)) {
-      return Collections.emptyList();
-    }
-
-    final byte[] replacement = newArtifactId.getBytes(StandardCharsets.UTF_8);
-    final int length = oldArtifactId.getBytes(StandardCharsets.UTF_8).length;
-    final Replacement occurrence = new Replacement(offset, length, replacement);
-    return Collections.singletonList(occurrence);
-  }
-
-  private static final List<String> ARTIFACT_ID_PATH = Collections.unmodifiableList(Arrays.asList(
-      "project", "artifactId"
-  ));
-
-  private static final List<String> PARENT_ARTIFACT_ID_PATH = Collections.unmodifiableList(Arrays.asList(
-      "project", "parent", "artifactId"
-  ));
-
-  private boolean isArtifactId(final List<String> path) {
-    return ARTIFACT_ID_PATH.equals(path) || PARENT_ARTIFACT_ID_PATH.equals(path);
+    final Matcher replaceMatcher = artifactIdPattern.matcher(prefix).region(0, limit);
+    return replaceMatcher.replaceAll("$1" + newVersion + "$2") + suffix;
   }
 }

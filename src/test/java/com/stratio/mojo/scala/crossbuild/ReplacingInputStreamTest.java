@@ -15,6 +15,7 @@
  */
 package com.stratio.mojo.scala.crossbuild;
 
+import static java.util.Arrays.asList;
 import static org.fest.assertions.Assertions.assertThat;
 
 import java.io.IOException;
@@ -24,8 +25,6 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.plexus.util.StringInputStream;
 import org.junit.Test;
-
-import static java.util.Arrays.asList;
 
 public class ReplacingInputStreamTest {
 

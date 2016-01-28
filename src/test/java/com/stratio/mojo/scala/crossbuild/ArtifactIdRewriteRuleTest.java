@@ -15,91 +15,62 @@
  */
 package com.stratio.mojo.scala.crossbuild;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.xml.stream.Location;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.XMLEvent;
-import static org.fest.assertions.Assertions.*;
+import static org.fest.assertions.Assertions.assertThat;
 
 import org.junit.Test;
-import static org.mockito.Mockito.*;
 
 public class ArtifactIdRewriteRuleTest {
 
-  private XMLEventReader mockXMLEventReader(final String artifactId) throws XMLStreamException {
-    final XMLEventReader reader = mock(XMLEventReader.class);
-    when(reader.getElementText()).thenReturn(artifactId);
-    final XMLEvent nextEvent = mock(XMLEvent.class);
-    when(reader.peek()).thenReturn(nextEvent);
-    final Location nextLocation = mock(Location.class);
-    when(nextLocation.getCharacterOffset()).thenReturn(0);
-    when(nextEvent.getLocation()).thenReturn(nextLocation);
-    return reader;
+  @Test
+  public void noOccurrence() {
+    final RewriteRule rule = new ArtifactIdRewriteRule("2.11");
+    assertThat(rule.replace("<project><artifactId>foo</artifactId></project>"))
+        .isEqualTo("<project><artifactId>foo</artifactId></project>");
+    assertThat(rule.replace("<project><parent><artifactId>foo</artifactId></parent></project>"))
+        .isEqualTo("<project><parent><artifactId>foo</artifactId></parent></project>");
   }
 
   @Test
-  public void noStartDocument() throws XMLStreamException {
-    final String oldArtifactId = "ABC_2.10";
-    final String newVersion = "2.11";
-    final RewriteRule rule = new ArtifactIdRewriteRule(newVersion);
-    final XMLEventReader reader = mockXMLEventReader(oldArtifactId);
-    final XMLEvent event = mock(XMLEvent.class);
-    when(event.isStartElement()).thenReturn(false);
-    assertThat(rule.replace(Arrays.asList("project", "artifactId"), reader, event))
-        .isEmpty();
+  public void sameVersion() {
+    final RewriteRule rule = new ArtifactIdRewriteRule("2.10");
+    assertThat(rule.replace("<project><artifactId>foo_2.10</artifactId></project>"))
+        .isEqualTo("<project><artifactId>foo_2.10</artifactId></project>");
+    assertThat(rule.replace("<project><parent><artifactId>foo_2.10</artifactId></parent></project>"))
+        .isEqualTo("<project><parent><artifactId>foo_2.10</artifactId></parent></project>");
   }
 
   @Test
-  public void badPath() throws XMLStreamException {
-    final String oldArtifactId = "ABC_2.10";
-    final String newVersion = "2.11";
-    final RewriteRule rule = new ArtifactIdRewriteRule(newVersion);
-    final XMLEventReader reader = mockXMLEventReader(oldArtifactId);
-    final XMLEvent event = mock(XMLEvent.class);
-    when(event.isStartElement()).thenReturn(true);
-    assertThat(rule.replace(Collections.<String>emptyList(), reader, event))
-      .isEmpty();
-    assertThat(rule.replace(Arrays.asList("project"), reader, event))
-        .isEmpty();
-    assertThat(rule.replace(Arrays.asList("artifactId"), reader, event))
-        .isEmpty();
-    assertThat(rule.replace(Arrays.asList("project", "artifactId", "other"), reader, event))
-        .isEmpty();
+  public void simpleOccurrence() {
+    final RewriteRule rule = new ArtifactIdRewriteRule("2.11");
+    assertThat(rule.replace("<project><artifactId>foo_2.10</artifactId></project>"))
+        .isEqualTo("<project><artifactId>foo_2.11</artifactId></project>");
+    assertThat(rule.replace("<project><parent><artifactId>foo_2.10</artifactId></parent></project>"))
+        .isEqualTo("<project><parent><artifactId>foo_2.11</artifactId></parent></project>");
+    assertThat(rule.replace("\n <project>\n <parent>\n <artifactId>foo_2.10</artifactId>\n </parent>\n </project>"))
+        .isEqualTo("\n <project>\n <parent>\n <artifactId>foo_2.11</artifactId>\n </parent>\n </project>");
+    assertThat(rule.replace("<!-- Comment --> <project><parent><artifactId>foo_2.10</artifactId></parent></project>"))
+        .isEqualTo("<!-- Comment --> <project><parent><artifactId>foo_2.11</artifactId></parent></project>");
   }
 
   @Test
-  public void noArtifactChange() throws XMLStreamException {
-    final String oldArtifactId = "ABC_2.10";
-    final String newVersion = "2.10";
-    final RewriteRule rule = new ArtifactIdRewriteRule(newVersion);
-    final XMLEventReader reader = mockXMLEventReader(oldArtifactId);
-    final XMLEvent event = mock(XMLEvent.class);
-    when(event.isStartElement()).thenReturn(true);
-    assertThat(rule.replace(
-        Arrays.asList("project", "artifactId"),
-        reader,
-        event
-    )).isEmpty();
+  public void bothParentAndSelf() {
+    final RewriteRule rule = new ArtifactIdRewriteRule("2.11");
+    assertThat(rule.replace("<project><parent><artifactId>parent_2.10</artifactId></parent><artifactId>foo_2.10</artifactId></project>"))
+        .isEqualTo("<project><parent><artifactId>parent_2.11</artifactId></parent><artifactId>foo_2.11</artifactId></project>");
   }
 
   @Test
-  public void replacement() throws XMLStreamException {
-    final String oldArtifactId = "ABC_2.10";
-    final String newArtifactId = "ABC_2.11";
-    final String newVersion = "2.11";
-    final RewriteRule rule = new ArtifactIdRewriteRule(newVersion);
-    final XMLEventReader reader = mockXMLEventReader(oldArtifactId);
-    final XMLEvent event = mock(XMLEvent.class);
-    when(event.isStartElement()).thenReturn(true);
-    assertThat(rule.replace(
-        Arrays.asList("project", "artifactId"),
-        reader,
-        event
-    )).containsExactly(new Replacement(0, oldArtifactId.length(), newArtifactId.getBytes()));
+  public void doNotReplaceInProfiles() {
+    final RewriteRule rule = new ArtifactIdRewriteRule("2.11");
+    assertThat(rule.replace("<project><properties><foo>bar</foo></properties><profiles><properties><test.prop>foobar</test.prop></properties>"))
+        .isEqualTo("<project><properties><foo>bar</foo></properties><profiles><properties><test.prop>foobar</test.prop></properties>");
+  }
+
+  @Test
+  public void doNotReplaceInDependencies() {
+    final RewriteRule rule = new ArtifactIdRewriteRule("2.11");
+    assertThat(rule.replace("<project><artifactId>foo_2.10</artifactId><dependencies><artifactId>foo_2.10</artifactId></dependencies>"))
+        .isEqualTo("<project><artifactId>foo_2.11</artifactId><dependencies><artifactId>foo_2.10</artifactId></dependencies>");
   }
 
 }

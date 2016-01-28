@@ -18,9 +18,6 @@ package com.stratio.mojo.scala.crossbuild;
 import java.io.File;
 import java.io.IOException;
 
-import javax.xml.stream.XMLStreamException;
-
-import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

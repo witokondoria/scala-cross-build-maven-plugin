@@ -15,46 +15,41 @@
  */
 package com.stratio.mojo.scala.crossbuild;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-class XMLRewriter {
+import org.apache.commons.io.IOUtils;
+
+class FileRewriter {
 
   private static final String BKP_SUFFIX = ".bkp";
 
   private List<RewriteRule> rules;
 
-  public XMLRewriter(final List<RewriteRule> rules) {
+  public FileRewriter(final List<RewriteRule> rules) {
     this.rules = rules;
   }
 
   public void rewrite(final File file) throws IOException, XMLStreamException {
+    if (!file.exists()) {
+      throw new FileNotFoundException("File does not exist: " + file);
+    }
     backupFile(file);
     final File bkpFile = getBackupFileName(file);
-
-    final FindReplacements findReplacements = new FindReplacements(rules);
-    final List<Replacement> occurrences = findReplacements.find(bkpFile);
-    if (!occurrences.isEmpty()) {
-      try (final BufferedInputStream in = new BufferedInputStream(
-          new ReplacingInputStream(new FileInputStream(bkpFile), occurrences)
-      )) {
-        try (final BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file, false))) {
-          int b;
-          while ((b = in.read()) != -1) {
-            out.write(b);
-          }
-        }
-      }
+    String result = IOUtils.toString(new FileInputStream(file), StandardCharsets.UTF_8);
+    for (final RewriteRule rule: rules) {
+      result = rule.replace(result);
     }
+    IOUtils.write(result, new FileOutputStream(file), StandardCharsets.UTF_8);
   }
 
   private static void backupFile(final File origFile) throws IOException {
