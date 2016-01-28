@@ -22,10 +22,10 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +37,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
-
-import com.ctc.wstx.exc.WstxEOFException;
 
 public class RewritePomTest {
 
@@ -61,8 +59,8 @@ public class RewritePomTest {
     final MavenProject project = getMockMavenProject(new File(path));
     final String newBinaryVersion = "2.11";
     final String newVersion = "2.11.7";
-    thrown.expect(NoSuchFileException.class);
-    thrown.expectMessage(path);
+    thrown.expect(FileNotFoundException.class);
+    thrown.expectMessage("File does not exist: " + path);
     rewritePom.rewrite(project, newBinaryVersion, newVersion);
   }
 
@@ -76,9 +74,8 @@ public class RewritePomTest {
     final MavenProject project = getMockMavenProject(file);
     final String newBinaryVersion = "2.11";
     final String newVersion = "2.11.7";
-    //TODO: thrown.expect(IOException.class); ????
-    thrown.expect(WstxEOFException.class);
     rewritePom.rewrite(project, newBinaryVersion, newVersion);
+    assertThat(IOUtils.toString(new FileInputStream(file))).isEmpty();
   }
 
   @Test

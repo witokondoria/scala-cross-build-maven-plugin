@@ -31,11 +31,11 @@ class RewritePom {
         new PropertyRewriteRule("scala.binary.version", newBinaryVersion),
         new PropertyRewriteRule("scala.version", newVersion)
     );
-    final XMLRewriter rewriter = new XMLRewriter(rewriteRules);
+    final FileRewriter rewriter = new FileRewriter(rewriteRules);
     rewriter.rewrite(pom.getFile());
   }
 
   public void restorePom(final MavenProject pom) throws IOException {
-    XMLRewriter.restoreFile(pom.getFile());
+    FileRewriter.restoreFile(pom.getFile());
   }
 }
