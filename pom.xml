@@ -127,6 +127,7 @@
         <version>${maven.invoker.plugin.version}</version>
         <configuration>
           <showVersion>true</showVersion>
+          <failIfNoProjects>true</failIfNoProjects>
         </configuration>
         <executions>
           <execution>
