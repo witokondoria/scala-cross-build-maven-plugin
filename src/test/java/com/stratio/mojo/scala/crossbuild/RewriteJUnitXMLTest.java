@@ -78,6 +78,19 @@ public class RewriteJUnitXMLTest {
     file.delete();
   }
 
+  @Test
+  public void idempotency() throws IOException, JDOMException {
+    final RewriteJUnitXML rewriter = new RewriteJUnitXML();
+    tempDir.create();
+    final File file = tempDir.newFile();
+    file.delete();
+    Files.copy(getClass().getResourceAsStream("/basic_junit_result.xml"), file.toPath());
+    final String newBinaryVersion = "2.11";
+    rewriter.rewrite(file, newBinaryVersion);
+    assertEqualToResource(file, "/basic_junit_result.xml");
+    file.delete();
+  }
+
   private void assertEqualToResource(final File actual, final String expected) throws IOException {
     final List<String> actualLines = IOUtils.readLines(new FileInputStream(actual));
     final List<String> expectedLines = new ArrayList<>(actualLines.size());

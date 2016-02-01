@@ -43,7 +43,7 @@ class RewriteJUnitXML {
         continue;
       }
       final String oldValue = nameAttribute.getValue();
-      if (SCALA_SUFFIX.matcher(oldValue).matches()) {
+      if (SCALA_SUFFIX.matcher(oldValue).find()) {
         continue;
       }
       final String newValue = oldValue + " [Scala " + scalaBinaryVersion + "]";
