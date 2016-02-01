@@ -142,6 +142,9 @@
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <cloneClean>true</cloneClean>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+              <!-- Ensure that proxy is used -->
+              <settingsFile>src/it/settings.xml</settingsFile>
+              <mergeUserSettings>true</mergeUserSettings>
               <postBuildHookScript>verify</postBuildHookScript>
               <pomIncludes>
                 <pomInclude>*/pom.xml</pomInclude>
