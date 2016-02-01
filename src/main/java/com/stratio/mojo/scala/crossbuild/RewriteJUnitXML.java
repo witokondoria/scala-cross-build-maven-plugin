@@ -52,7 +52,6 @@ class RewriteJUnitXML {
       }
       nameAttribute.setValue(newValue);
     }
-    final Format format = Format.getRawFormat();
     final XMLOutputter xmlOut = new XMLOutputter();
     xmlOut.output(doc, new FileOutputStream(file));
   }
