@@ -28,6 +28,7 @@
     <test.version>${project.version}</test.version>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.shared.utils.version>3.0.0</maven.shared.utils.version>
     <jdom.version>2.0.2</jdom.version>
   </properties>
