@@ -18,12 +18,10 @@ package com.stratio.mojo.scala.crossbuild;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.io.DirectoryScanner;
 import org.jdom2.JDOMException;
 
@@ -35,19 +33,7 @@ import org.jdom2.JDOMException;
  * cross builds, results can be aggregated by reporting tools.
  */
 @Mojo(name = "transform-junit-reports")
-public class TransformJUnitReportMojo extends AbstractMojo {
-
-  /**
-   * The Scala binary version to switch to.
-   *
-   * @parameter expression="${scala.binary.version}"
-   * @required
-   * @readonly
-   */
-  private String scalaBinaryVersion;
-
-  @Parameter(defaultValue = "${project}", readonly = true, required = true)
-  private MavenProject project;
+public class TransformJUnitReportMojo extends AbstractCrossBuildMojo {
 
   @Parameter(defaultValue = "${project.build.directory}", readonly = true, required = true)
   private File target;
@@ -59,7 +45,8 @@ public class TransformJUnitReportMojo extends AbstractMojo {
   private String[] excludes;
 
   @Override
-  public void execute() throws MojoExecutionException, MojoFailureException {
+  public void execute(final String scalaBinaryVersion, final String scalaVersion)
+      throws MojoExecutionException, MojoFailureException {
     final RewriteJUnitXML rewriter = new RewriteJUnitXML();
     for (final String file: getAllFiles(includes, excludes)) {
       try {
@@ -93,14 +80,12 @@ public class TransformJUnitReportMojo extends AbstractMojo {
   private String getSurefireReportsDirectory() {
     // Guess surefire-reports path.
     // TODO: Inspect surefire plugin configuration.
-    final String outputDirectory = project.getBuild().getOutputDirectory();
-    return outputDirectory + File.pathSeparator + "surefire-reports";
+    return target + File.pathSeparator + "surefire-reports";
   }
 
   private String getFailsafeReportsDirectory() {
     // Guess failsafe-reports path.
     // TODO: Inspect surefire plugin configuration.
-    final String outputDirectory = project.getBuild().getOutputDirectory();
-    return outputDirectory + File.pathSeparator + "failsafe-reports";
+    return target + File.pathSeparator + "failsafe-reports";
   }
 }
