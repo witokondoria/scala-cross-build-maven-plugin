@@ -26,12 +26,23 @@ import org.apache.maven.project.MavenProject;
 
 class ChangeVersionMojoHelper {
 
-  public static void changeProjects(final List<MavenProject> projects, final String scalaBinaryVersion, final String scalaVersion, final Log log) throws MojoExecutionException {
+  public static void changeProjects(
+      final List<MavenProject> projects,
+      final String scalaBinaryVersionProperty,
+      final String scalaVersionProperty,
+      final String scalaBinaryVersion,
+      final String scalaVersion,
+      final Log log) throws MojoExecutionException {
     final RewritePom rewritePom = new RewritePom();
     for (final MavenProject subproject: projects) {
       log.debug("Rewriting " + subproject.getFile());
       try {
-        rewritePom.rewrite(subproject, scalaBinaryVersion, scalaVersion);
+        rewritePom.rewrite(
+            subproject,
+            scalaBinaryVersionProperty,
+            scalaVersionProperty,
+            scalaBinaryVersion,
+            scalaVersion);
       } catch (final IOException | XMLStreamException ex) {
         restoreProjects(projects);
         throw new MojoExecutionException("Failed to rewrite POM", ex);

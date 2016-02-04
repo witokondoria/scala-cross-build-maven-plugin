@@ -25,11 +25,17 @@ import org.apache.maven.project.MavenProject;
 
 class RewritePom {
 
-  public void rewrite(final MavenProject pom, final String newBinaryVersion, final String newVersion) throws IOException, XMLStreamException {
+  public void rewrite(
+      final MavenProject pom,
+      final String scalaBinaryVersionProperty,
+      final String scalaVersionProperty,
+      final String newBinaryVersion,
+      final String newVersion
+  ) throws IOException, XMLStreamException {
     final List<RewriteRule> rewriteRules = Arrays.asList(
         new ArtifactIdRewriteRule(newBinaryVersion),
-        new PropertyRewriteRule("scala.binary.version", newBinaryVersion),
-        new PropertyRewriteRule("scala.version", newVersion)
+        new PropertyRewriteRule(scalaBinaryVersionProperty, newBinaryVersion),
+        new PropertyRewriteRule(scalaVersionProperty, newVersion)
     );
     final FileRewriter rewriter = new FileRewriter(rewriteRules);
     rewriter.rewrite(pom.getFile());
