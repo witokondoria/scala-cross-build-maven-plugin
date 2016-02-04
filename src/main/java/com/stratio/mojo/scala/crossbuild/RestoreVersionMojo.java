@@ -48,7 +48,13 @@ public class RestoreVersionMojo extends AbstractCrossBuildMojo {
 
   public void execute(final String scalaBinaryVersion, final String scalaVersion)
       throws MojoExecutionException {
-    ChangeVersionMojoHelper.changeProjects(reactorProjects, defaultScalaBinaryVersion, defaultScalaVersion, getLog());
+    ChangeVersionMojoHelper.changeProjects(
+        reactorProjects,
+        scalaBinaryVersionProperty,
+        scalaVersionProperty,
+        defaultScalaBinaryVersion,
+        defaultScalaVersion,
+        getLog());
   }
 
 }

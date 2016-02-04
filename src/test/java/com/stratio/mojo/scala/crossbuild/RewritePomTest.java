@@ -61,7 +61,7 @@ public class RewritePomTest {
     final String newVersion = "2.11.7";
     thrown.expect(FileNotFoundException.class);
     thrown.expectMessage("File does not exist: " + path);
-    rewritePom.rewrite(project, newBinaryVersion, newVersion);
+    rewritePom.rewrite(project, "scala.binary.version", "scala.version", newBinaryVersion, newVersion);
   }
 
   @Test
@@ -74,7 +74,7 @@ public class RewritePomTest {
     final MavenProject project = getMockMavenProject(file);
     final String newBinaryVersion = "2.11";
     final String newVersion = "2.11.7";
-    rewritePom.rewrite(project, newBinaryVersion, newVersion);
+    rewritePom.rewrite(project, "scala.binary.version", "scala.version", newBinaryVersion, newVersion);
     assertThat(IOUtils.toString(new FileInputStream(file))).isEmpty();
   }
 
@@ -88,7 +88,7 @@ public class RewritePomTest {
     final MavenProject project = getMockMavenProject(file);
     final String newBinaryVersion = "2.11";
     final String newVersion = "2.11.7";
-    rewritePom.rewrite(project, newBinaryVersion, newVersion);
+    rewritePom.rewrite(project, "scala.binary.version", "scala.version", newBinaryVersion, newVersion);
     assertEqualToResource(file, "/basic_pom_result.xml");
     file.delete();
   }

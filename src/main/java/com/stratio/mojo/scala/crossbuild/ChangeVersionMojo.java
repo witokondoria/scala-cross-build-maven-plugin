@@ -54,7 +54,13 @@ public class ChangeVersionMojo extends AbstractCrossBuildMojo {
 
   public void execute(final String scalaBinaryVersion, final String scalaVersion)
       throws MojoExecutionException {
-    ChangeVersionMojoHelper.changeProjects(reactorProjects, scalaBinaryVersion, scalaVersion, getLog());
+    ChangeVersionMojoHelper.changeProjects(
+        reactorProjects,
+        scalaBinaryVersionProperty,
+        scalaVersionProperty,
+        scalaBinaryVersion,
+        scalaVersion,
+        getLog());
   }
 
 }

@@ -41,13 +41,13 @@ abstract class AbstractCrossBuildMojo extends AbstractMojo {
    * Maven property to use for Scala binary version.
    */
   @Parameter(property = "scalaBinaryVersionProperty", defaultValue = "scala.binary.version" ,required = true)
-  private String scalaBinaryVersionProperty;
+  protected String scalaBinaryVersionProperty;
 
   /**
    * Maven property to use for Scala version.
    */
   @Parameter(property = "scalaVersionProperty", defaultValue = "scala.version" , required = true)
-  private String scalaVersionProperty;
+  protected String scalaVersionProperty;
 
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
