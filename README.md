@@ -22,4 +22,7 @@ mvn scala-cross-build:change-version -Pscala-2.11
 # Transform JUnit XML reports to append Scala binary version to test case names.
 mvn scala-cross-build:change-version -Pscala-2.11
 
+# Change back to the default Scala version.
+mvn scala-cross-build:restore-version
+
 ```
