@@ -17,27 +17,26 @@ package com.stratio.mojo.scala.crossbuild;
 
 import java.util.regex.Pattern;
 
-class PropertyRewriteRule implements RewriteRule {
+class PropertyRewriteRule extends RegexRewriteRule {
 
-  private final String newValue;
-  private final Pattern propertyPattern;
+  private final static Pattern limitPattern =
+      Pattern.compile("<(?:/properties|build|reporting|profiles)>");
 
   public PropertyRewriteRule(final String property, final String newValue) {
-    this.newValue = newValue;
-    this.propertyPattern = Pattern.compile(String.format(
-        "(<project(?:(?<!</properties>)(?:.|\n))*?<properties>(?:(?<!</properties>)(?:.|\n))*?<%s>)"
-            + "(?:(?:[^<]|\n)*?)"
-            + "(</%s>(?:(?<!</properties>)(?:.|\n))*?</properties>)",
-        regexEscape(property), regexEscape(property)
-        ), Pattern.MULTILINE & Pattern.DOTALL);
+    super(
+        Pattern.compile(String.format(
+            "(<properties>(?:.|\n)*?<%s>)"
+                + "(?:(?:[^<]|\n)*?)"
+                + "(</%s>)",
+            regexEscape(property), regexEscape(property)
+        ), Pattern.MULTILINE & Pattern.DOTALL),
+        "$1" + newValue + "$2",
+        limitPattern
+    );
   }
 
-  private String regexEscape(final String input) {
+  private static String regexEscape(final String input) {
     return input.replace(".", "\\.");
   }
 
-  @Override
-  public String replace(final String input) {
-    return propertyPattern.matcher(input).replaceFirst("$1" + newValue + "$2");
-  }
 }
