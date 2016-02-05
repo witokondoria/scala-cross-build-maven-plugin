@@ -18,6 +18,7 @@ package com.stratio.mojo.scala.crossbuild;
 import static org.fest.assertions.Assertions.assertThat;
 
 import org.junit.Test;
+import org.junit.experimental.theories.suppliers.TestedOn;
 
 public class PropertyRewriteRuleTest {
 
