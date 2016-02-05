@@ -32,7 +32,7 @@ class RewritePom {
       final String newBinaryVersion,
       final String newVersion
   ) throws IOException, XMLStreamException {
-    final List<RewriteRule> rewriteRules = Arrays.asList(
+    final List<RewriteRule> rewriteRules = Arrays.<RewriteRule>asList(
         new ArtifactIdRewriteRule(newBinaryVersion),
         new PropertyRewriteRule(scalaBinaryVersionProperty, newBinaryVersion),
         new PropertyRewriteRule(scalaVersionProperty, newVersion)
