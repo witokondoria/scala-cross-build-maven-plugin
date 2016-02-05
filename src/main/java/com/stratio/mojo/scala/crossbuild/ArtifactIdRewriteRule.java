@@ -15,34 +15,22 @@
  */
 package com.stratio.mojo.scala.crossbuild;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class ArtifactIdRewriteRule implements RewriteRule {
+class ArtifactIdRewriteRule extends RegexRewriteRule {
 
-  private final String newVersion;
-  private final Pattern artifactIdPattern = Pattern.compile(
+  private final static Pattern artifactIdPattern = Pattern.compile(
       "(<artifactId>(?:[^<]|\\n){0,50}?_)(?:[0-9]+\\.[0-9]+)(</artifactId>)",
       Pattern.MULTILINE & Pattern.DOTALL
   );
-  private final Pattern limitPattern = Pattern.compile("<(?:build|dependencies|reporting|profiles)>");
+  private final static Pattern limitPattern = Pattern.compile("<(?:build|dependencies|reporting|profiles)>");
 
   public ArtifactIdRewriteRule(final String newVersion) {
-    this.newVersion = newVersion;
+    super(
+        artifactIdPattern,
+        "$1" + newVersion + "$2",
+        limitPattern
+    );
   }
 
-  @Override
-  public String replace(final String input) {
-    final Matcher limitMatcher = limitPattern.matcher(input);
-    int limit = input.length();
-    String prefix = input;
-    String suffix = "";
-    if (limitMatcher.find()) {
-      limit = limitMatcher.toMatchResult().start();
-      prefix = input.substring(0, limit);
-      suffix = input.substring(limit);
-    }
-    final Matcher replaceMatcher = artifactIdPattern.matcher(prefix).region(0, limit);
-    return replaceMatcher.replaceAll("$1" + newVersion + "$2") + suffix;
-  }
 }

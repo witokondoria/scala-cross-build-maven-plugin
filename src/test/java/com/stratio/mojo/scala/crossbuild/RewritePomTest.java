@@ -93,6 +93,26 @@ public class RewritePomTest {
     file.delete();
   }
 
+  /**
+   * Regression test for https://github.com/Stratio/scala-cross-build-maven-plugin/issues/23
+   * @throws IOException
+   * @throws XMLStreamException
+   */
+  @Test
+  public void rewriteWithoutStackOverflow_Issue32() throws IOException, XMLStreamException {
+    final RewritePom rewritePom = new RewritePom();
+    tempDir.create();
+    final File file = tempDir.newFile();
+    file.delete();
+    Files.copy(getClass().getResourceAsStream("/issue_23_pom.xml"), file.toPath());
+    final MavenProject project = getMockMavenProject(file);
+    final String newBinaryVersion = "2.10";
+    final String newVersion = "2.10.4";
+    rewritePom.rewrite(project, "scala.binary.version", "scala.version", newBinaryVersion, newVersion);
+    assertEqualToResource(file, "/issue_23_pom_result.xml");
+    file.delete();
+  }
+
   private void assertEqualToResource(final File actual, final String expected) throws IOException {
     final List<String> actualLines = IOUtils.readLines(new FileInputStream(actual));
     final List<String> expectedLines = new ArrayList<>(actualLines.size());
