@@ -49,6 +49,18 @@ abstract class AbstractCrossBuildMojo extends AbstractMojo {
   @Parameter(property = "scalaVersionProperty", defaultValue = "scala.version" , required = true)
   protected String scalaVersionProperty;
 
+  /**
+   * Maven property to use for Scala binary version.
+   */
+  @Parameter(property = "defaultScalaBinaryVersion", required = false)
+  private String defaultScalaBinaryVersion;
+
+  /**
+   * Maven property to use for Scala version.
+   */
+  @Parameter(property = "defaultScalaVersion", required = false)
+  private String defaultScalaVersion;
+
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     final String scalaBinaryVersion = project.getProperties().getProperty(scalaBinaryVersionProperty);
