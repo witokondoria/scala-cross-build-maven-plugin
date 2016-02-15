@@ -17,6 +17,9 @@ package com.stratio.mojo.scala.crossbuild;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -47,7 +50,7 @@ public class TransformJUnitReportMojo extends AbstractCrossBuildMojo {
   public void execute(final String scalaBinaryVersion, final String scalaVersion)
       throws MojoExecutionException, MojoFailureException {
     final RewriteJUnitXML rewriter = new RewriteJUnitXML();
-    for (final String file: getAllFiles(includes, excludes)) {
+    for (final String file: getFilesToRewrite()) {
       try {
         rewriter.rewrite(new File(file), scalaBinaryVersion);
       } catch (final IOException ex) {
@@ -56,7 +59,11 @@ public class TransformJUnitReportMojo extends AbstractCrossBuildMojo {
     }
   }
 
-  private String[] getAllFiles(String[] includes, final String[] excludes) {
+  List<String> getFilesToRewrite() {
+    return getAllFiles(includes, excludes);
+  }
+
+  private List<String> getAllFiles(String[] includes, final String[] excludes) {
     if (includes == null || includes.length == 0) {
       getLog().debug("No includes were specified, falling back to surefire-reports, failsafe-reports.");
       includes = getDefaultTestReports();
@@ -66,25 +73,38 @@ public class TransformJUnitReportMojo extends AbstractCrossBuildMojo {
     ds.setIncludes(includes);
     ds.setExcludes(excludes);
     ds.scan();
-    return ds.getIncludedFiles();
+    final String[] allReportFiles = ds.getIncludedFiles();
+    final List<String> allXmlReportFiles = new ArrayList<>(allReportFiles.length);
+    for (final String reportFile: allReportFiles) {
+      if (reportFile.endsWith(".xml")) {
+        allXmlReportFiles.add(reportFile);
+      }
+    }
+    return allXmlReportFiles;
   }
 
   private String[] getDefaultTestReports() {
     return new String[] {
-        getSurefireReportsDirectory() + File.pathSeparator + "TEST-*.xml",
-        getFailsafeReportsDirectory() + File.pathSeparator + "TEST-*.xml"
+        getSurefireReportsDirectory() + File.separator + "TEST-*.xml",
+        getFailsafeReportsDirectory() + File.separator + "TEST-*.xml"
     };
+  }
+
+  private String getRelativeTarget() {
+    final Path absoluteNormalizedWorkingDir = new File(".").getAbsoluteFile().toPath().normalize();
+    final Path absoluteNormalizedTarget = target.getAbsoluteFile().toPath().normalize();
+    return absoluteNormalizedWorkingDir.relativize(absoluteNormalizedTarget).normalize().toString();
   }
 
   private String getSurefireReportsDirectory() {
     // Guess surefire-reports path.
     // TODO: Inspect surefire plugin configuration.
-    return target + File.pathSeparator + "surefire-reports";
+    return getRelativeTarget() + File.separator + "surefire-reports";
   }
 
   private String getFailsafeReportsDirectory() {
     // Guess failsafe-reports path.
     // TODO: Inspect surefire plugin configuration.
-    return target + File.pathSeparator + "failsafe-reports";
+    return getRelativeTarget() + File.separator + "failsafe-reports";
   }
 }
