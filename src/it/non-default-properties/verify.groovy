@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import java.io.*;
 
-def expectedOutputArtifacts = [
-        "2.10/non-default-properties_2.10-1.jar",
-        "2.11/non-default-properties_2.11-1.jar"
-]
+import com.stratio.mojo.scala.crossbuild.ITs
 
-expectedOutputArtifacts.each {
-    def file = new File("${basedir}/target/${it}")
-    if (!file.isFile()) {
-        throw new FileNotFoundException("Could not find generated JAR: " + file)
-    }
-}
+def artifactNames = [ "non-default-properties" ]
 
-return true
+def targetPaths = [ "${basedir}/target".toString() ]
+
+def scalaBinaryVersions = [ "2.10", "2.11" ]
+
+def testCases = [ ]
+
+return ITs.verify(scalaBinaryVersions, artifactNames, targetPaths, testCases)

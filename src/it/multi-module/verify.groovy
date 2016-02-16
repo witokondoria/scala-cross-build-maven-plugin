@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import java.io.*;
 
-def expectedOutputArtifacts = [
-        "2.10/sub-module_2.10-1.jar",
-        "2.11/sub-module_2.11-1.jar"
+import com.stratio.mojo.scala.crossbuild.ITs
+
+def artifactNames = [ "sub-module" ]
+
+def targetPaths = [ "${basedir}/sub-module/target".toString() ]
+
+def scalaBinaryVersions = [ "2.10", "2.11" ]
+
+def testCases = [
+        "Hello World test"
 ]
 
-expectedOutputArtifacts.each {
-    def file = new File("${basedir}/sub-module/target/${it}")
-    if (!file.isFile()) {
-        throw new FileNotFoundException("Could not find generated JAR: " + file)
-    }
-}
-
-return true
+return ITs.verify(scalaBinaryVersions, artifactNames, targetPaths, testCases)
