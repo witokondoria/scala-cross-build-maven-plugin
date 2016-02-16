@@ -14,34 +14,16 @@
  * limitations under the License.
  */
 
+import com.stratio.mojo.scala.crossbuild.ITs
 
-import org.apache.commons.io.IOUtils
+def artifactNames = [ "full-example" ]
 
-import java.io.*;
+def targetPaths = [ "${basedir}/target".toString() ]
 
-def scalaVersions = [ "2.10", "2.11" ]
+def scalaBinaryVersions = [ "2.10", "2.11" ]
 
-def expectedOutputArtifacts = [
-        "2.10/full-example_2.10-1.jar",
-        "2.11/full-example_2.11-1.jar",
-        "2.10/surefire-reports/TEST-HelloWorldSuite.xml",
-        "2.11/surefire-reports/TEST-HelloWorldSuite.xml"
+def testCases = [
+        "Hello World test"
 ]
 
-expectedOutputArtifacts.each {
-    def file = new File("${basedir}/target/${it}")
-    if (!file.isFile()) {
-        throw new FileNotFoundException("Could not find generated artifact: " + file)
-    }
-}
-
-scalaVersions.each {
-    def s = IOUtils.toString(new FileInputStream("${basedir}/target/$it/surefire-reports/TEST-HelloWorldSuite.xml"))
-    def scalaString = "[Scala $it]"
-    def testString = "Hello World test $scalaString"
-    if (!s.contains(testString)) {
-        throw new RuntimeException("JUnit XML test report does not contain Scala version string ($scalaString)")
-    }
-}
-
-return true
+return ITs.verify(scalaBinaryVersions, artifactNames, targetPaths, testCases)
