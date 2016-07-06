@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/Stratio/scala-cross-build-maven-plugin/badge.svg?branch=master)](https://coveralls.io/github/Stratio/scala-cross-build-maven-plugin?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Stratio/scala-cross-build-maven-plugin/badge.svg?branch=branch-0.1)](https://coveralls.io/github/Stratio/scala-cross-build-maven-plugin?branch=master)
 
 scala-cross-build-maven-plugin
 ==============================
